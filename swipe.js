@@ -13,7 +13,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     swipeDown: '&yswipeDown' // callback function
                 },
                 link: function(scope, element, attrs) {
-                    var triggerStart, containerMove, outHeight, IsJsonString, default_settings;
+                    var triggerStart, containerMove, outHeight, IsJsonString, default_settings, startPlace;
                     var startMove = false;
                     var parent = element.parent().parent();
                     containerMove = parent[0].offsetHeight;
@@ -34,7 +34,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     if (attrs.yswipe) {
                         var value = attrs.yswipe;
-                        // console.log('value', value)
                         if (IsJsonString(value)) {
                             value = JSON.parse(value);
                             if (value.up) {
@@ -51,10 +50,12 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     element.bind('mousedown', function(e) {
                         startMove = true;
+                        startPlace = e.clientY;
                     });
 
                     element.bind('touchstart', function(e) {
                         startMove = true;
+                        startPlace = e.changedTouches[0].clientY;
                     });
 
 
@@ -78,32 +79,31 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     });
                     element.bind('mouseup', function(e) {
                         if (startMove && outHeight) {
-                            if ((containerMove * 0.55) <= outHeight) {
+                            if (startPlace > e.clientY) {
                                 element[0].style.height = default_settings.up;
                                 scope.swipeUp();
-                            } else if ((outHeight >= (containerMove * 0.25)) && (outHeight <= (containerMove * 0.40))) {
-                                element[0].style.height = default_settings.initial;
                             } else {
                                 element[0].style.height = default_settings.down;
                                 scope.swipeDown();
                             }
                         }
                         startMove = false;
+                        startPlace = false;
                     });
 
                     element.bind('touchend', function(e) {
+
                         if (startMove && outHeight) {
-                            if ((containerMove * 0.55) <= outHeight) {
+                            if (startPlace > e.changedTouches[0].clientY) {
                                 element[0].style.height = default_settings.up;
                                 scope.swipeUp();
-                            } else if ((outHeight >= (containerMove * 0.25)) && (outHeight <= (containerMove * 0.40))) {
-                                element[0].style.height = default_settings.initial;
                             } else {
                                 element[0].style.height = default_settings.down;
                                 scope.swipeDown();
                             }
                         }
                         startMove = false;
+                        startPlace = false;
                     });
 
                     // unbind listeners
