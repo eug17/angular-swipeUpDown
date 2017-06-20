@@ -2,7 +2,7 @@
     "name": "angular-swipeUpDown",
     "version": "1.0.0",
     "dependencies": {
-        "angular": ">=1.3.0",
+        "angular": ">=1.3.0"
     },
     "description": "Swipe Up/Down Angular Module",
     "main": "swipe.js",
