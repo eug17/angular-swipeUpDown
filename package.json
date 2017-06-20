@@ -1,0 +1,25 @@
+{
+    "name": "angular-swipeUpDown",
+    "version": "1.0.0",
+    "dependencies": {
+        "angular": ">=1.3.0",
+    },
+    "description": "Swipe Up/Down Angular Module",
+    "main": "swipe.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/eug17/angular-swipeUpDown.git"
+    },
+    "keywords": [
+        "angular swipe, siwipe Up and Down, swipeOut "
+    ],
+    "author": "Yevhen Kotliar",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/eug17/angular-swipeUpDown/issues"
+    },
+    "homepage": "https://github.com/eug17/angular-swipeUpDown#readme"
+}
