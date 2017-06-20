@@ -34,7 +34,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     if (attrs.yswipe) {
                         var value = attrs.yswipe;
-                        console.log('value', value)
+                        // console.log('value', value)
                         if (IsJsonString(value)) {
                             value = JSON.parse(value);
                             if (value.up) {
