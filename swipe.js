@@ -66,7 +66,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					element.bind('mousedown', function(e) {
 						startMove = true;
 						stackMove = [];
-						console.log('mousedown e', e);
+						stackLenght = 0;
 						startTime = e.timeStamp;
 						startPlace = e.clientY;
 					});
@@ -74,7 +74,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					element.bind('touchstart', function(e) {
 						startMove = true;
 						stackMove = [];
-						console.log('touchstart e', e);
+						stackLenght = 0;
 						startTime = e.timeStamp;
 						startPlace = e.changedTouches[0].clientY;
 					});
@@ -107,16 +107,16 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					});
 					element.bind('mouseup', function(e) {
 						if (startMove && outHeight) {
-							var point = parseInt(stackLenght * 0.75);
-							if (point && ((stackMove[point].time - stackMove[stackLenght - 1].time) < 130) && (point != (stackLenght - 1))) {
+							var point = parseInt(stackLenght * 0.75) - 1;
+							if ((point > 0) && ((stackMove[point].time - stackMove[stackLenght - 1].time) < 130) && (point != (stackLenght - 1))) {
 								element[0].style.transitionDuration = '0.4s';
 							}
-							if ((outHeight >= (default_settings.initial * 0.2)) && (outHeight <= (default_settings.initial * 1.2))) {
+							if ((outHeight >= (default_settings.initial * 0.1)) && (outHeight <= (default_settings.initial * 1.1))) {
 								element[0].style.height = default_settings.initial + 'px';
 							} else if (startPlace > e.clientY) {
 								element[0].style.height = default_settings.up;
 								scope.swipeUp();
-							} else {
+							} else if (stackLenght > 1) {
 								element[0].style.height = default_settings.down;
 								scope.swipeDown();
 							}
@@ -128,16 +128,16 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 					element.bind('touchend', function(e) {
 						if (startMove && outHeight) {
-							var point = parseInt(stackLenght * 0.75);
-							if (point && ((stackMove[point].time - stackMove[stackLenght - 1].time) < 130) && (point != (stackLenght - 1))) {
+							var point = parseInt(stackLenght * 0.75) - 1;
+							if ((point > 0) && ((stackMove[point].time - stackMove[stackLenght - 1].time) < 150) && (point != (stackLenght - 1))) {
 								element[0].style.transitionDuration = '0.4s';
 							}
-							if ((outHeight >= (default_settings.initial * 0.2)) && (outHeight <= (default_settings.initial * 1.2))) {
+							if ((outHeight >= (default_settings.initial * 0.1)) && (outHeight <= (default_settings.initial * 1.1))) {
 								element[0].style.height = default_settings.initial + 'px';
 							} else if (startPlace > e.changedTouches[0].clientY) {
 								element[0].style.height = default_settings.up;
 								scope.swipeUp();
-							} else {
+							} else if (stackLenght > 1) {
 								element[0].style.height = default_settings.down;
 								scope.swipeDown();
 							}
