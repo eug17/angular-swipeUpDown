@@ -12,19 +12,18 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					swipeDown: '&yswipeDown' // callback function
 				},
 				link: function(scope, element, attrs) {
-					var triggerStart, containerMove, outHeight, IsJsonString, default_settings, startPlace, startTime, endTime, stackMove, stackLenght;
+					var triggerStart, containerMove, compare_time, IsJsonString, default_settings, startPlace, startTime, endTime, stackMove, stackLenght;
 					var startMove = false;
 					var parent = element.parent().parent();
 					containerMove = parent[0].offsetHeight;
 					default_settings = {
-						up: '90vh',
+						up: '10vh',
 						initial: '30vh',
 						down: '0px',
 					};
 
-
-					element[0].style.transitionDuration = '0.9s';
-					element[0].style.transitionProperty = 'height';
+					element[0].style.position = 'fixed';
+					element[0].style.transitionProperty = 'top';
 					element[0].style.transitionTimingFunction = 'ease';
 
 					IsJsonString = function(str) {
@@ -62,6 +61,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 						default_settings.initial = containerMove * 0.3;
 					}
 
+					var initial_top = containerMove - default_settings.initial;
+
+					element[0].style.top = initial_top + 'px';
+					element[0].style.height = '100%';
 
 					element.bind('mousedown', function(e) {
 						startMove = true;
@@ -69,6 +72,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 						stackLenght = 0;
 						startTime = e.timeStamp;
 						startPlace = e.clientY;
+
 					});
 
 					element.bind('touchstart', function(e) {
@@ -86,38 +90,43 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 								move: e.clientY,
 								time: e.timeStamp
 							});
-							outHeight = containerMove - e.clientY;
 							element[0].style.transitionDuration = '0s';
-							element[0].style.height = outHeight + 'px';
+							element[0].style.top = e.clientY + 'px';
 
 						}
 					});
 
 					parent.bind('touchmove', function(e) {
 						if (startMove && e.changedTouches[0].clientY < containerMove) {
+							// element[0].style.height = '100vh';
 							stackLenght = stackMove.push({
 								move: e.changedTouches[0].clientY,
 								time: e.timeStamp
 							});
 							element[0].style.transitionDuration = '0s';
-							outHeight = containerMove - e.changedTouches[0].clientY;
-							element[0].style.height = outHeight + 'px';
+							element[0].style.top = e.changedTouches[0].clientY + 'px';
 
 						}
 					});
 					element.bind('mouseup', function(e) {
-						if (startMove && outHeight) {
-							var point = parseInt(stackLenght * 0.75) - 1;
-							if ((point > 0) && ((stackMove[point].time - stackMove[stackLenght - 1].time) < 130) && (point != (stackLenght - 1))) {
-								element[0].style.transitionDuration = '0.4s';
+						if (startMove) {
+							element[0].style.transitionDuration = '0.9s';
+
+							if (stackLenght > 1) {
+								var point = parseInt(stackLenght * 0.75) - 1;
+								compare_time = stackMove[stackLenght - 1].time - stackMove[point].time;
+								if (compare_time < 200) {
+									element[0].style.transitionDuration = '0.4s';
+								}
 							}
-							if ((outHeight >= (default_settings.initial * 0.1)) && (outHeight <= (default_settings.initial * 1.1))) {
-								element[0].style.height = default_settings.initial + 'px';
+
+							if ((initial_top >= (e.clientY * 0.95)) && (initial_top <= (e.clientY * 1.1))) {
+								element[0].style.top = initial_top + 'px';
 							} else if (startPlace > e.clientY) {
-								element[0].style.height = default_settings.up;
+								element[0].style.top = default_settings.up;
 								scope.swipeUp();
 							} else if (stackLenght > 1) {
-								element[0].style.height = default_settings.down;
+								element[0].style.top = default_settings.down;
 								scope.swipeDown();
 							}
 						}
@@ -127,18 +136,23 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					});
 
 					element.bind('touchend', function(e) {
-						if (startMove && outHeight) {
-							var point = parseInt(stackLenght * 0.75) - 1;
-							if ((point > 0) && ((stackMove[point].time - stackMove[stackLenght - 1].time) < 150) && (point != (stackLenght - 1))) {
-								element[0].style.transitionDuration = '0.4s';
+						if (startMove) {
+							element[0].style.transitionDuration = '0.9s';
+							if (stackLenght > 1) {
+								var point = parseInt(stackLenght * 0.75) - 1;
+								compare_time = stackMove[stackLenght - 1].time - stackMove[point].time;
+								if (compare_time < 200) {
+									element[0].style.transitionDuration = '0.4s';
+								}
 							}
-							if ((outHeight >= (default_settings.initial * 0.1)) && (outHeight <= (default_settings.initial * 1.1))) {
-								element[0].style.height = default_settings.initial + 'px';
+
+							if ((initial_top >= (e.changedTouches[0].clientY * 0.95)) && (initial_top <= (e.changedTouches[0].clientY * 1.1))) {
+								element[0].style.top = initial_top + 'px';
 							} else if (startPlace > e.changedTouches[0].clientY) {
-								element[0].style.height = default_settings.up;
+								element[0].style.top = default_settings.up;
 								scope.swipeUp();
 							} else if (stackLenght > 1) {
-								element[0].style.height = default_settings.down;
+								element[0].style.top = default_settings.down;
 								scope.swipeDown();
 							}
 						}
