@@ -4,7 +4,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 (function(angular) {
 	'use strict';
 	angular.module('yswipe', [])
-		.directive('yswipe', [function() {
+		.directive('yswipe', ['$timeout', function($timeout) {
 			return {
 				restrict: "EA",
 				scope: {
@@ -12,13 +12,13 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 					swipeDown: '&yswipeDown' // callback function
 				},
 				link: function(scope, element, attrs) {
-					var triggerStart, containerMove, compare_time, IsJsonString, default_settings, startPlace, startTime, endTime, stackMove, stackLenght;
+					var triggerStart, containerMove, compare_time, IsJsonString, default_settings, startPlace, startTime, endTime, stackMove, stackLenght, initial_top;
 					var startMove = false;
+
 					var parent = element.parent().parent();
 					containerMove = parent[0].offsetHeight;
 					default_settings = {
 						up: '10vh',
-						initial: '30vh',
 						down: '0px',
 					};
 
@@ -42,29 +42,19 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 							if (value.up) {
 								default_settings.up = value.up
 							}
-							if (value.initial) {
-								default_settings.initial = value.initial
-							}
 							if (value.down) {
 								default_settings.down = value.down
 							}
 						}
 					}
 
+					$timeout(function() {
+						default_settings.initial = element[0].clientHeight;
+						initial_top = containerMove - default_settings.initial;
+						element[0].style.top = initial_top + 'px';
+						element[0].style.height = '100%';
+					});
 
-					var initial;
-					if (default_settings.initial.indexOf('px') > -1) {
-						default_settings.initial = containerMove - parseFloat(default_settings.initial)
-					} else if (default_settings.initial.indexOf('vh') > -1) {
-						default_settings.initial = containerMove * (parseFloat(default_settings.initial) / 100)
-					} else {
-						default_settings.initial = containerMove * 0.3;
-					}
-
-					var initial_top = containerMove - default_settings.initial;
-
-					element[0].style.top = initial_top + 'px';
-					element[0].style.height = '100%';
 
 					element.bind('mousedown', function(e) {
 						startMove = true;
